@@ -198,7 +198,10 @@ header { text-align: center; margin-bottom: 28px; }
   display: flex; align-items: center; justify-content: center;
   font-size: 0.6rem; font-variant-numeric: tabular-nums;
   transition: background 0.25s, border-color 0.25s;
+  cursor: pointer;
 }
+.w-dot:hover:not(.met) { border-color: var(--gold); }
+.w-dot.met:hover { opacity: 0.85; }
 .w-dot.met    { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 600; }
 .w-dot.part   { background: transparent; border-color: var(--gold); color: var(--gold); }
 .w-dot.today  { border-style: dashed; border-color: var(--fg2); }
@@ -267,6 +270,40 @@ header { text-align: center; margin-bottom: 28px; }
 .del-btn:hover { opacity: 1; color: var(--danger); }
 .empty { color: var(--fg2); font-style: italic; font-size: 0.87rem; padding: 14px 0; text-align: center; }
 
+/* ── Week complete badge ── */
+.week-badge {
+  margin-top: 14px;
+  padding: 10px 0;
+  background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+  border-radius: 8px;
+  font-family: 'Rye', serif;
+  font-size: 0.82rem;
+  color: #fff;
+  letter-spacing: 0.09em;
+  text-align: center;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+  animation: badge-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes badge-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Gold particles ── */
+@keyframes particle-burst {
+  0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+  80%  { opacity: 0.7; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--spin)) scale(0.2); opacity: 0; }
+}
+.gold-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: particle-burst var(--dur, 1s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@media (prefers-reduced-motion: reduce) { .gold-particle { display: none; } }
+
 /* ── Backup row ── */
 .backup-row {
   display: flex;
@@ -304,6 +341,51 @@ header { text-align: center; margin-bottom: 28px; }
   pointer-events: none; z-index: 100; white-space: nowrap;
 }
 .toast.on { transform: translateX(-50%) translateY(0); }
+
+/* ── Achievement badges ── */
+.badge-row { display:flex; gap:12px; margin-bottom:18px; }
+.m-badge {
+  flex:1; border-radius:10px; padding:11px 14px; text-align:center;
+  background:linear-gradient(135deg,#7A5200 0%,#B87800 50%,#E8A810 100%);
+  box-shadow:0 2px 14px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.15);
+  animation:badge-in .45s cubic-bezier(.34,1.56,.64,1) both;
+}
+.m-badge.is-final {
+  background:linear-gradient(135deg,#8A5A00 0%,#D09010 35%,#FFD050 65%,#D09010 100%);
+  box-shadow:0 3px 20px rgba(200,150,0,.45), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.m-badge.is-grand {
+  background:linear-gradient(135deg,#6A3A00 0%,#C07808 25%,#F0C020 55%,#C07808 80%,#6A3A00 100%);
+  box-shadow:0 4px 28px rgba(220,150,0,.6), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.badge-type { font-size:.58rem; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,240,180,.75); margin-bottom:3px; }
+.badge-name { font-family:'Rye',serif; font-size:.82rem; color:#fff; letter-spacing:.04em; text-shadow:1px 1px 0 rgba(0,0,0,.3); }
+.badge-val  { font-size:.62rem; color:rgba(255,240,180,.7); margin-top:2px; font-variant-numeric:tabular-nums; }
+
+/* ── Grand finale overlay ── */
+#finale { position:fixed; inset:0; z-index:10000; background:rgba(8,4,1,.94);
+  display:flex; align-items:center; justify-content:center; backdrop-filter:blur(6px);
+  animation:fade-in .7s ease both; }
+#finale[hidden] { display:none !important; }
+@keyframes fade-in { from{opacity:0}to{opacity:1} }
+.finale-box { text-align:center; padding:48px 32px; max-width:440px; width:90%; }
+.finale-stars { font-size:1.8rem; letter-spacing:.5em; color:var(--gold-lt); margin-bottom:20px;
+  animation:pulse-glow 2.2s ease-in-out infinite; }
+@keyframes pulse-glow {
+  0%,100%{ opacity:.7; text-shadow:0 0 10px rgba(240,176,32,.3); }
+  50%    { opacity:1;  text-shadow:0 0 32px rgba(240,176,32,.75); } }
+.finale-headline { font-family:'Rye',serif; font-size:clamp(2.2rem,7vw,3.5rem);
+  color:var(--gold-lt); text-shadow:0 0 40px rgba(240,180,30,.5);
+  line-height:1.1; margin-bottom:8px; letter-spacing:.04em; }
+.finale-sub { font-family:'Playfair Display',serif; font-style:italic;
+  color:rgba(240,200,100,.8); font-size:.95rem; letter-spacing:.08em; margin-bottom:24px; }
+.finale-body { font-family:'Lora',serif; color:rgba(240,210,150,.92);
+  font-size:1.02rem; line-height:1.78; margin-bottom:34px; }
+.finale-btn { background:linear-gradient(135deg,var(--gold),var(--gold-lt)); color:#fff;
+  border:none; font-family:'Rye',serif; font-size:.88rem; padding:13px 34px;
+  border-radius:8px; cursor:pointer; letter-spacing:.05em;
+  box-shadow:0 4px 22px rgba(200,140,0,.5); transition:transform .2s; }
+.finale-btn:hover { transform:scale(1.04); }
 
 /* ── Responsive ── */
 @media (max-width: 500px) {
@@ -349,6 +431,14 @@ header { text-align: center; margin-bottom: 28px; }
     </div>
   </div>
 
+  <!-- Achievement badges -->
+  <div id="badge-section" hidden>
+    <div class="badge-row">
+      <div id="badge-hrs"></div>
+      <div id="badge-days"></div>
+    </div>
+  </div>
+
   <!-- Log session -->
   <div class="card">
     <div class="card-hd">Log a Session</div>
@@ -376,6 +466,7 @@ header { text-align: center; margin-bottom: 28px; }
   <div class="card">
     <div class="card-hd">This Week</div>
     <div class="week-grid" id="week-grid"></div>
+    <div id="week-badge"></div>
   </div>
 
   <!-- Trail markers -->
@@ -395,9 +486,39 @@ header { text-align: center; margin-bottom: 28px; }
 
 </div>
 
+<div id="finale" hidden>
+  <div class="finale-box">
+    <div class="finale-stars">✦ ✦ ✦</div>
+    <div class="finale-headline">Gold Strike</div>
+    <div class="finale-sub">300 Hours · 600 Days</div>
+    <div class="finale-body">You've done it.<br>You are a true banjo player.<br>The gold rush is complete.</div>
+    <button class="finale-btn" onclick="closeFinale()">Claim Your Badge</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Milestone definitions ─────────────────────────
+const DAY_MS = [
+  { days:  30, name:'Month In',       label:'30 Days'  },
+  { days:  50, name:'Committed',      label:'50 Days'  },
+  { days: 100, name:'Century',        label:'100 Days' },
+  { days: 200, name:'Iron Will',      label:'200 Days' },
+  { days: 300, name:'300 Days',       label:'300 Days' },
+  { days: 365, name:'Full Year',      label:'365 Days' },
+  { days: 400, name:'Going Strong',   label:'400 Days' },
+  { days: 500, name:'Half Thousand',  label:'500 Days' },
+  { days: 600, name:'Banjo for Life', label:'600 Days', final:true },
+];
+const HR_MS = [
+  { hrs:  25, name:'Greenhorn',        label:'25 Hours'  },
+  { hrs:  60, name:'Prospector',       label:'60 Hours'  },
+  { hrs: 100, name:'Trail Hand',       label:'100 Hours' },
+  { hrs: 150, name:'Claim Staker',     label:'150 Hours' },
+  { hrs: 300, name:'Gold Rush Legend', label:'300 Hours', final:true },
+];
+
 // ── Data ──────────────────────────────────────────
 const MILESTONES = [
   { hrs: 10,  range: '10 – 25 hrs',  name: 'The "Bum-Ditty" Lock',      desc: 'Counter-intuitive at first; suddenly clicks into effortless hand bounce.' },
@@ -415,7 +536,12 @@ function save(d) {
 }
 function totalMins(d) { return Object.values(d).reduce((a,b)=>a+b,0); }
 
-function dStr(date) { return date.toISOString().slice(0,10); }
+function dStr(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 function today() { return dStr(new Date()); }
 
 function weekDates() {
@@ -447,6 +573,22 @@ function render() {
   const daysmet = wd.filter(x=>(d[x]||0)>=30).length;
   document.getElementById('s-week').textContent = daysmet + '/5';
   document.getElementById('s-streak').textContent = streak(d);
+  document.getElementById('week-badge').innerHTML = daysmet >= 5
+    ? '<div class="week-badge">✦ &nbsp; Week Complete &nbsp; ✦</div>' : '';
+
+  // Milestone badges
+  const td = qualDays(d);
+  const grand = th >= 300 && td >= 600;
+  const curHrMs  = [...HR_MS].reverse().find(ms=>th>=ms.hrs);
+  const curDayMs = [...DAY_MS].reverse().find(ms=>td>=ms.days);
+  const bSec = document.getElementById('badge-section');
+  if (!curHrMs && !curDayMs) {
+    bSec.hidden = true;
+  } else {
+    bSec.hidden = false;
+    document.getElementById('badge-hrs').innerHTML  = curHrMs  ? badgeHTML('Hours', curHrMs,  grand) : '';
+    document.getElementById('badge-days').innerHTML = curDayMs ? badgeHTML('Days',  curDayMs, grand) : '';
+  }
 
   // Week grid
   const DAY = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -457,7 +599,7 @@ function render() {
     if (m>=30)      { cls+=' met';   lbl = m<60 ? m+'m' : (m/60).toFixed(1)+'h'; }
     else if (m>0)   { cls+=' part';  lbl = m+'m'; }
     else if (isT)   { cls+=' today'; }
-    return `<div class="w-cell"><div class="w-name">${DAY[i]}</div><div class="${cls}">${lbl}</div></div>`;
+    return `<div class="w-cell"><div class="w-name">${DAY[i]}</div><div class="${cls}" onclick="focusDay('${dt}')">${lbl}</div></div>`;
   }).join('');
 
   // Milestones
@@ -739,12 +881,55 @@ function logSession() {
   const mins = parseInt(document.getElementById('f-mins').value);
   const date = document.getElementById('f-date').value || today();
   if (!mins || mins<1 || mins>480) { toast('Enter 1–480 minutes'); return; }
+
   const d = load();
-  d[date] = (d[date]||0) + mins;
+  const wd = weekDates();
+  const weekBefore = wd.filter(x=>(d[x]||0)>=30).length;
+  const hrsBefore  = totalMins(d)/60;
+  const daysBefore = qualDays(d);
+
+  d[date] = (d[date]||0)+mins;
   save(d);
+
+  const weekAfter = wd.filter(x=>(d[x]||0)>=30).length;
+  const hrsAfter  = totalMins(d)/60;
+  const daysAfter = qualDays(d);
+
   document.getElementById('f-mins').value='';
-  toast(mins>=30 ? 'Session logged — goal met! ✦' : `${mins} min added`);
   render();
+
+  const cel = loadCel();
+  const toFire = [];
+
+  if (weekBefore<5 && weekAfter>=5) toFire.push({kind:'week'});
+
+  HR_MS.forEach(ms=>{
+    if (hrsBefore<ms.hrs && hrsAfter>=ms.hrs && !cel['h'+ms.hrs]) {
+      cel['h'+ms.hrs]=true; toFire.push({kind:'hrs',ms});
+    }
+  });
+  DAY_MS.forEach(ms=>{
+    if (daysBefore<ms.days && daysAfter>=ms.days && !cel['d'+ms.days]) {
+      cel['d'+ms.days]=true; toFire.push({kind:'days',ms});
+    }
+  });
+
+  const grand = hrsAfter>=300 && daysAfter>=600 && !cel['grand'];
+  if (grand) cel['grand']=true;
+  saveCel(cel);
+
+  if (grand) {
+    setTimeout(triggerGrandFinale, 400);
+  } else if (toFire.length>0) {
+    toFire.forEach((item,i)=>{
+      setTimeout(()=>{
+        if (item.kind==='week') triggerWeekComplete();
+        else triggerMilestone(item.kind, item.ms);
+      }, i*2600);
+    });
+  } else {
+    toast(mins>=30?'Session logged — goal met! ✦':`${mins} min added`);
+  }
 }
 
 function del(date) {
@@ -755,6 +940,75 @@ function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('on');
   setTimeout(()=>el.classList.remove('on'), 2600);
+}
+
+// ── Helpers ───────────────────────────────────────
+function qualDays(d) { return Object.values(d).filter(m=>m>=30).length; }
+function loadCel()   { try{return JSON.parse(localStorage.getItem('banjo-cel')||'{}')}catch{return{}} }
+function saveCel(c)  { try{localStorage.setItem('banjo-cel',JSON.stringify(c))}catch{} }
+
+function burstParticles(count, spread) {
+  const chars = ['✦','★','◆','✸','•','✦','★'];
+  const cols  = ['#F0B020','#D09010','#F5C842','#FFD860','#E8980A','#FFC830'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(()=>{
+      const el = document.createElement('span');
+      el.className = 'gold-particle';
+      el.textContent = chars[i%chars.length];
+      el.style.cssText = [
+        `left:${5+Math.random()*90}vw`,
+        `bottom:${18+Math.random()*18}%`,
+        `font-size:${0.5+Math.random()*1.3}rem`,
+        `color:${cols[Math.floor(Math.random()*cols.length)]}`,
+        `--tx:${(Math.random()-.5)*spread}px`,
+        `--ty:${-(80+Math.random()*520)}px`,
+        `--spin:${Math.random()*720-360}deg`,
+        `--dur:${0.7+Math.random()*0.9}s`,
+      ].join(';');
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),2000);
+    }, i*22);
+  }
+}
+
+function badgeHTML(type, ms, grand) {
+  const cls = grand ? 'is-grand' : ms.final ? 'is-final' : '';
+  return `<div class="m-badge ${cls}">
+    <div class="badge-type">${type}</div>
+    <div class="badge-name">${ms.name}</div>
+    <div class="badge-val">${ms.label}</div>
+  </div>`;
+}
+
+// ── Celebrations ──────────────────────────────────
+function triggerWeekComplete() {
+  burstParticles(40, 340);
+  toast('Five days — week complete! ✦');
+}
+
+function triggerMilestone(kind, ms) {
+  burstParticles(ms.final ? 80 : 52, ms.final ? 500 : 370);
+  const lbl = kind==='hrs' ? `${ms.hrs} hours` : `${ms.days} days`;
+  toast(`${ms.name} — ${lbl}! ✦`);
+}
+
+function triggerGrandFinale() {
+  burstParticles(90, 620);
+  setTimeout(()=>burstParticles(90,620), 650);
+  setTimeout(()=>burstParticles(90,620), 1300);
+  setTimeout(()=>{ document.getElementById('finale').hidden = false; }, 1100);
+}
+
+function closeFinale() {
+  document.getElementById('finale').hidden = true;
+}
+
+// ── Week dot click ───────────────────────────────
+function focusDay(date) {
+  document.getElementById('f-date').value = date;
+  const minsEl = document.getElementById('f-mins');
+  minsEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+  minsEl.focus();
 }
 
 // ── Backup ───────────────────────────────────────
