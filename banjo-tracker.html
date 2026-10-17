@@ -1,0 +1,812 @@
+<title>Banjo Trail</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+/* Gold Rush / Mount Diablo — parchment day / ghost-town night */
+:root {
+  --bg:        #F0E2BC;
+  --surface:   #E4D09A;
+  --surface2:  #D8C080;
+  --fg:        #2C1A06;
+  --fg2:       #7A5020;
+  --gold:      #B87000;
+  --gold-lt:   #E8980A;
+  --success:   #4A7030;
+  --danger:    #8A2C1A;
+  --border:    rgba(100, 60, 10, 0.22);
+  --shadow:    rgba(60, 30, 5, 0.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg:        #16100A;
+    --surface:   #221608;
+    --surface2:  #2E1E0C;
+    --fg:        #F0D898;
+    --fg2:       #9A7030;
+    --gold:      #D09010;
+    --gold-lt:   #F0B020;
+    --success:   #5A8038;
+    --danger:    #9A3020;
+    --border:    rgba(180, 120, 40, 0.2);
+    --shadow:    rgba(0, 0, 0, 0.5);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:        #16100A;
+  --surface:   #221608;
+  --surface2:  #2E1E0C;
+  --fg:        #F0D898;
+  --fg2:       #9A7030;
+  --gold:      #D09010;
+  --gold-lt:   #F0B020;
+  --success:   #5A8038;
+  --danger:    #9A3020;
+  --border:    rgba(180, 120, 40, 0.2);
+  --shadow:    rgba(0, 0, 0, 0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Lora', Georgia, serif;
+  margin: 0;
+  padding-block: 28px;
+  padding-left:  max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.wrap { max-width: 860px; margin: 0 auto; }
+
+/* ── Header ── */
+header { text-align: center; margin-bottom: 28px; }
+.brand {
+  font-family: 'Rye', serif;
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin: 0 0 4px;
+  text-shadow: 2px 3px 0 rgba(0,0,0,0.25);
+}
+.tagline {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: var(--fg2);
+  font-size: 0.95rem;
+  letter-spacing: 0.07em;
+}
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 14px auto 0; max-width: 260px;
+}
+.divider-line { flex:1; height: 1px; background: var(--border); }
+.divider-star { color: var(--gold); font-size: 0.8rem; opacity: 0.8; }
+
+/* ── Mountain canvas ── */
+.mountain-wrap {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 22px;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 30px var(--shadow);
+}
+#mt-canvas { display: block; width: 100%; }
+.mt-label {
+  position: absolute; bottom: 10px; right: 14px;
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 0.72rem;
+  color: rgba(255,230,160,0.55);
+  letter-spacing: 0.06em;
+}
+
+/* ── Stats ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 22px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: 0 2px 10px var(--shadow);
+}
+.stat-val {
+  font-family: 'Rye', serif;
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 5px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-lbl {
+  font-size: 0.66rem;
+  color: var(--fg2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 14px var(--shadow);
+}
+.card-hd {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--fg);
+  margin: 0 0 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.card-hd::before {
+  content: '';
+  display: block; width: 18px; height: 2px;
+  background: var(--gold); flex-shrink: 0;
+}
+
+/* ── Log form ── */
+.log-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.fld { display: flex; flex-direction: column; gap: 4px; }
+.fld label {
+  font-size: 0.66rem; text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--fg2);
+}
+.fld input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: 'Lora', serif; font-size: 0.95rem;
+  padding: 8px 12px; border-radius: 7px;
+  outline: none; transition: border-color 0.2s; min-width: 0;
+}
+.fld input:focus { border-color: var(--gold); }
+#f-mins { width: 90px; }
+#f-date { width: 165px; }
+.log-btn {
+  background: var(--gold); color: #fff; border: none;
+  font-family: 'Rye', serif; font-size: 0.82rem;
+  letter-spacing: 0.04em; padding: 9px 22px;
+  border-radius: 7px; cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+.log-btn:hover { background: var(--gold-lt); }
+.log-btn:active { transform: scale(0.97); }
+
+/* ── Week grid ── */
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 8px; margin-top: 4px;
+}
+.w-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.w-name { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg2); }
+.w-dot {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; font-variant-numeric: tabular-nums;
+  transition: background 0.25s, border-color 0.25s;
+}
+.w-dot.met    { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 600; }
+.w-dot.part   { background: transparent; border-color: var(--gold); color: var(--gold); }
+.w-dot.today  { border-style: dashed; border-color: var(--fg2); }
+
+/* ── Milestones ── */
+.ms-track {
+  height: 5px; background: var(--border);
+  border-radius: 3px; margin: 30px 0 14px;
+  position: relative;
+}
+.ms-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+  border-radius: 3px;
+  transition: width 0.7s ease;
+}
+.ms-pin {
+  position: absolute; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
+}
+.ms-pin.hit  { background: var(--gold); border-color: var(--gold); }
+.ms-list { display: flex; flex-direction: column; gap: 10px; }
+.ms-row {
+  display: flex; gap: 12px; align-items: baseline;
+  font-size: 0.87rem; opacity: 0.45;
+  transition: opacity 0.3s;
+}
+.ms-row.hit   { opacity: 1; }
+.ms-row.near  { opacity: 0.8; }
+.ms-hrs {
+  font-family: 'Rye', serif; font-size: 0.76rem;
+  color: var(--gold); min-width: 82px;
+  font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+.ms-body { min-width: 0; }
+.ms-name { font-weight: 600; color: var(--fg); display: block; }
+.ms-desc { color: var(--fg2); font-style: italic; font-size: 0.8rem; }
+.ms-check { margin-left: auto; color: var(--gold); font-size: 0.9rem; flex-shrink: 0; }
+
+/* ── History ── */
+.hist-list { display: flex; flex-direction: column; margin-top: 4px; }
+.hist-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.87rem; gap: 10px;
+}
+.hist-row:last-child { border-bottom: none; }
+.hist-date { color: var(--fg2); font-style: italic; flex-shrink: 0; }
+.hist-mins { font-variant-numeric: tabular-nums; font-weight: 600; }
+.hist-badge {
+  font-family: 'Rye', serif; font-size: 0.6rem;
+  color: var(--success); margin-left: 6px;
+}
+.del-btn {
+  background: none; border: none;
+  color: var(--fg2); cursor: pointer;
+  font-size: 0.78rem; padding: 2px 6px;
+  opacity: 0.4; transition: opacity 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.del-btn:hover { opacity: 1; color: var(--danger); }
+.empty { color: var(--fg2); font-style: italic; font-size: 0.87rem; padding: 14px 0; text-align: center; }
+
+/* ── Backup row ── */
+.backup-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+.backup-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg2);
+  font-family: 'Lora', serif;
+  font-size: 0.76rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  letter-spacing: 0.03em;
+}
+.backup-btn:hover {
+  background: var(--surface2);
+  color: var(--fg);
+  border-color: var(--gold);
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--gold); color: #fff;
+  font-family: 'Rye', serif; font-size: 0.82rem;
+  padding: 10px 26px; border-radius: 8px;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.35);
+  transition: transform 0.3s ease;
+  pointer-events: none; z-index: 100; white-space: nowrap;
+}
+.toast.on { transform: translateX(-50%) translateY(0); }
+
+/* ── Responsive ── */
+@media (max-width: 500px) {
+  .stats-row { gap: 8px; }
+  .stat { padding: 12px 8px; }
+  .week-grid { gap: 4px; }
+  .w-dot { width: 32px; height: 32px; }
+  .card { padding: 16px; }
+}
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand">Banjo Trail</div>
+    <div class="tagline">Road to 300 Hours — Clawhammer Style</div>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-star">✦ ✦ ✦</div>
+      <div class="divider-line"></div>
+    </div>
+  </header>
+
+  <!-- Mountain graphic -->
+  <div class="mountain-wrap">
+    <canvas id="mt-canvas"></canvas>
+    <div class="mt-label">Mt. Diablo · 3,849 ft</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-val" id="s-hrs">0.0</div>
+      <div class="stat-lbl">Total Hours</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-week">0/5</div>
+      <div class="stat-lbl">This Week</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-streak">0</div>
+      <div class="stat-lbl">Day Streak</div>
+    </div>
+  </div>
+
+  <!-- Log session -->
+  <div class="card">
+    <div class="card-hd">Log a Session</div>
+    <div class="log-form">
+      <div class="fld">
+        <label for="f-mins">Minutes Practiced</label>
+        <input type="number" id="f-mins" min="1" max="480" placeholder="30">
+      </div>
+      <div class="fld">
+        <label for="f-date">Date</label>
+        <input type="date" id="f-date">
+      </div>
+      <button class="log-btn" onclick="logSession()">Log It</button>
+    </div>
+  </div>
+
+  <!-- Backup -->
+  <div class="backup-row">
+    <button class="backup-btn" onclick="exportData()">Export Backup</button>
+    <button class="backup-btn" onclick="document.getElementById('import-file').click()">Import Backup</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+  </div>
+
+  <!-- This week -->
+  <div class="card">
+    <div class="card-hd">This Week</div>
+    <div class="week-grid" id="week-grid"></div>
+  </div>
+
+  <!-- Trail markers -->
+  <div class="card">
+    <div class="card-hd">Trail Markers</div>
+    <div class="ms-track">
+      <div class="ms-fill" id="ms-fill"></div>
+    </div>
+    <div class="ms-list" id="ms-list"></div>
+  </div>
+
+  <!-- History -->
+  <div class="card">
+    <div class="card-hd">Recent Sessions</div>
+    <div class="hist-list" id="hist-list"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Data ──────────────────────────────────────────
+const MILESTONES = [
+  { hrs: 10,  range: '10 – 25 hrs',  name: 'The "Bum-Ditty" Lock',      desc: 'Counter-intuitive at first; suddenly clicks into effortless hand bounce.' },
+  { hrs: 35,  range: '35 – 60 hrs',  name: 'Targeting & First Tunes',    desc: 'Both hands coordinating — Cripple Creek & Boil Them Cabbage Down.' },
+  { hrs: 100, range: '100 – 150 hrs',name: 'Jam-Ready Rhythm',           desc: 'Right hand on pure autopilot; you can listen to others while playing.' },
+  { hrs: 300, range: '300 + hrs',    name: 'Fluent Old-Time Picker',     desc: 'Playing by ear, clawhammer as intuitive as tapping your foot.' },
+];
+
+function load() {
+  try { return JSON.parse(localStorage.getItem('banjo-v1') || '{}'); }
+  catch { return {}; }
+}
+function save(d) {
+  try { localStorage.setItem('banjo-v1', JSON.stringify(d)); } catch {}
+}
+function totalMins(d) { return Object.values(d).reduce((a,b)=>a+b,0); }
+
+function dStr(date) { return date.toISOString().slice(0,10); }
+function today() { return dStr(new Date()); }
+
+function weekDates() {
+  const t = new Date();
+  const off = (t.getDay() + 6) % 7; // Mon=0
+  const mon = new Date(t); mon.setDate(t.getDate() - off);
+  return Array.from({length:7}, (_,i)=>{ const d=new Date(mon); d.setDate(mon.getDate()+i); return dStr(d); });
+}
+
+function streak(d) {
+  let n=0, cur=new Date();
+  while(true) {
+    const s=dStr(cur);
+    if (!d[s] || d[s]<1) break;
+    n++; cur.setDate(cur.getDate()-1);
+  }
+  return n;
+}
+
+// ── Render ───────────────────────────────────────
+function render() {
+  const d = load();
+  const tm = totalMins(d);
+  const th = tm / 60;
+
+  document.getElementById('s-hrs').textContent = th.toFixed(1);
+
+  const wd = weekDates(), tod = today();
+  const daysmet = wd.filter(x=>(d[x]||0)>=30).length;
+  document.getElementById('s-week').textContent = daysmet + '/5';
+  document.getElementById('s-streak').textContent = streak(d);
+
+  // Week grid
+  const DAY = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  document.getElementById('week-grid').innerHTML = wd.map((dt,i)=>{
+    const m = d[dt]||0;
+    const isT = dt===tod;
+    let cls='w-dot', lbl='';
+    if (m>=30)      { cls+=' met';   lbl = m<60 ? m+'m' : (m/60).toFixed(1)+'h'; }
+    else if (m>0)   { cls+=' part';  lbl = m+'m'; }
+    else if (isT)   { cls+=' today'; }
+    return `<div class="w-cell"><div class="w-name">${DAY[i]}</div><div class="${cls}">${lbl}</div></div>`;
+  }).join('');
+
+  // Milestones
+  const pct = Math.min(100, th/300*100);
+  document.getElementById('ms-fill').style.width = pct+'%';
+
+  const track = document.querySelector('.ms-track');
+  track.querySelectorAll('.ms-pin').forEach(p=>p.remove());
+  MILESTONES.forEach(ms=>{
+    const p = document.createElement('div');
+    p.className = 'ms-pin' + (th>=ms.hrs?' hit':'');
+    p.style.left = (ms.hrs/300*100)+'%';
+    track.appendChild(p);
+  });
+
+  document.getElementById('ms-list').innerHTML = MILESTONES.map(ms=>{
+    const hit = th>=ms.hrs;
+    const near = !hit && th>=(ms.hrs*0.6);
+    return `<div class="ms-row ${hit?'hit':near?'near':''}">
+      <span class="ms-hrs">${ms.range}</span>
+      <div class="ms-body">
+        <span class="ms-name">${ms.name}</span>
+        <span class="ms-desc">${ms.desc}</span>
+      </div>
+      ${hit?'<span class="ms-check">✦</span>':''}
+    </div>`;
+  }).join('');
+
+  // History
+  const rows = Object.entries(d).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,12);
+  if (!rows.length) {
+    document.getElementById('hist-list').innerHTML = '<div class="empty">No sessions yet — pick up that banjo!</div>';
+  } else {
+    document.getElementById('hist-list').innerHTML = rows.map(([dt,m])=>{
+      const label = new Date(dt+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      const met = m>=30;
+      return `<div class="hist-row">
+        <span class="hist-date">${label}</span>
+        <span class="hist-mins">${m} min${met?'<span class="hist-badge"> ✦ goal</span>':''}</span>
+        <button class="del-btn" onclick="del('${dt}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  drawMtn(th);
+}
+
+// ── Mountain scene ────────────────────────────────
+function lerp(a,b,t){return a+(b-a)*t;}
+function rgb(r,g,b){return `rgb(${r|0},${g|0},${b|0})`;}
+
+function drawMtn(totalHrs) {
+  const cv = document.getElementById('mt-canvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const p = Math.min(1, totalHrs/300); // progress 0–1
+
+  ctx.clearRect(0,0,W,H);
+
+  // ── Sky
+  const sky = ctx.createLinearGradient(0,0,0,H*.75);
+  if (p < 0.25) {
+    // midnight → predawn
+    const t = p/0.25;
+    sky.addColorStop(0, rgb(lerp(6,18,t),  lerp(8,12,t),  lerp(20,30,t)));
+    sky.addColorStop(1, rgb(lerp(14,50,t), lerp(10,25,t), lerp(30,20,t)));
+  } else if (p < 0.55) {
+    // predawn → dawn gold
+    const t=(p-0.25)/0.3;
+    sky.addColorStop(0, rgb(lerp(18,60,t),  lerp(12,40,t), lerp(30,80,t)));
+    sky.addColorStop(1, rgb(lerp(50,200,t), lerp(25,110,t),lerp(20,40,t)));
+  } else {
+    // dawn → golden california day
+    const t=(p-0.55)/0.45;
+    sky.addColorStop(0, rgb(lerp(60,110,t), lerp(40,150,t),lerp(80,200,t)));
+    sky.addColorStop(1, rgb(lerp(200,245,t),lerp(110,190,t),lerp(40,100,t)));
+  }
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,W,H);
+
+  // ── Stars (fade out after ~40%)
+  const starAlpha = Math.max(0, 1 - p*2.8);
+  if (starAlpha > 0.01) {
+    ctx.fillStyle = `rgba(255,248,220,${starAlpha})`;
+    [[60,25],[170,18],[290,40],[440,12],[570,28],[690,18],[740,50],[120,55],[360,65],[600,44],[45,72],[520,60],[800,30],[220,38]].forEach(([x,y])=>{
+      ctx.beginPath(); ctx.arc(x/820*W, y/280*H, 1.3, 0, Math.PI*2); ctx.fill();
+    });
+  }
+
+  // ── Sun / moon
+  const sunX = (0.18 + p*0.45)*W;
+  const rawY  = H*0.8 - p*H*0.72;
+  const sunY  = rawY;
+  const sunR  = (12 + p*38);
+  const sunAlpha = Math.min(1, p*3.5);
+
+  if (sunAlpha > 0.03) {
+    // outer glow
+    const g = ctx.createRadialGradient(sunX,sunY,sunR*.4,sunX,sunY,sunR*3.2);
+    const gc = p>0.25 ? [255,180,50] : [200,220,255];
+    g.addColorStop(0, `rgba(${gc[0]},${gc[1]},${gc[2]},${sunAlpha*0.45})`);
+    g.addColorStop(1, `rgba(${gc[0]},${gc[1]},${gc[2]},0)`);
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(sunX,sunY,sunR*3.2,0,Math.PI*2); ctx.fill();
+    // disk
+    ctx.fillStyle = p>0.25
+      ? `rgba(255,215,70,${sunAlpha})`
+      : `rgba(210,225,255,${sunAlpha*0.7})`;
+    ctx.beginPath(); ctx.arc(sunX,sunY,sunR,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = `rgba(255,245,200,${sunAlpha*0.7})`;
+    ctx.beginPath(); ctx.arc(sunX,sunY,sunR*.55,0,Math.PI*2); ctx.fill();
+  }
+
+  // ── Far rolling hills (dusty California)
+  const hc1 = p<0.5
+    ? rgb(lerp(40,90,p*2),  lerp(30,70,p*2),  lerp(20,40,p*2))
+    : rgb(lerp(90,150,p*2-1),lerp(70,120,p*2-1),lerp(40,70,p*2-1));
+  ctx.fillStyle = hc1;
+  ctx.beginPath();
+  ctx.moveTo(0,H);
+  ctx.lineTo(0,H*.73);
+  ctx.bezierCurveTo(W*.12,H*.58, W*.28,H*.62, W*.5,H*.60);
+  ctx.bezierCurveTo(W*.68,H*.58, W*.82,H*.66, W,H*.70);
+  ctx.lineTo(W,H); ctx.fill();
+
+  // ── Mount Diablo — main ridge
+  const mc = p<0.5
+    ? rgb(lerp(20,70,p*2),  lerp(14,52,p*2),  lerp(8,28,p*2))
+    : rgb(lerp(70,130,p*2-1),lerp(52,100,p*2-1),lerp(28,55,p*2-1));
+  ctx.fillStyle = mc;
+  ctx.beginPath();
+  ctx.moveTo(-2, H);
+  ctx.lineTo(W*.05,  H*.76);
+  ctx.lineTo(W*.22,  H*.68);
+  ctx.lineTo(W*.38,  H*.36); // main summit
+  ctx.lineTo(W*.45,  H*.46);
+  ctx.lineTo(W*.52,  H*.38); // north peak
+  ctx.lineTo(W*.60,  H*.50);
+  ctx.lineTo(W*.74,  H*.54);
+  ctx.lineTo(W*.88,  H*.60);
+  ctx.lineTo(W+2,   H*.65);
+  ctx.lineTo(W+2, H); ctx.fill();
+
+  // ── Sunlit face on mountain (south/west face catching light)
+  if (p > 0.12) {
+    const lAlpha = Math.min(0.38, (p-0.12)*0.9);
+    const lg = ctx.createLinearGradient(sunX,sunY, W*.42, H*.36);
+    lg.addColorStop(0, `rgba(255,170,50,${lAlpha})`);
+    lg.addColorStop(1, `rgba(255,140,30,0)`);
+    ctx.fillStyle = lg;
+    ctx.beginPath();
+    ctx.moveTo(W*.22,H*.68); ctx.lineTo(W*.38,H*.36);
+    ctx.lineTo(W*.52,H*.38); ctx.lineTo(W*.60,H*.50);
+    ctx.lineTo(W*.74,H*.54); ctx.lineTo(W*.88,H*.60);
+    ctx.lineTo(W+2, H*.65); ctx.lineTo(W+2, H);
+    ctx.lineTo(W*.22, H);    ctx.closePath(); ctx.fill();
+  }
+
+  // ── Porch foreground ──
+  const gc2 = p<0.5
+    ? rgb(lerp(12,44,p*2), lerp(8,32,p*2), lerp(4,16,p*2))
+    : rgb(lerp(44,90,p*2-1),lerp(32,68,p*2-1),lerp(16,36,p*2-1));
+  ctx.fillStyle = gc2;
+  ctx.fillRect(0, H*.77, W, H*.23);
+
+  // Subtle porch planks
+  ctx.strokeStyle = 'rgba(0,0,0,0.09)';
+  ctx.lineWidth = Math.max(0.5, H*0.003);
+  for (let py = H*.80; py < H-1; py += H*0.052) {
+    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+  }
+
+  // Chair + banjo silhouette color
+  const chN = Math.min(1, p*2);
+  const chCol = `rgb(${lerp(7,34,chN)|0},${lerp(4,22,chN)|0},${lerp(1,9,chN)|0})`;
+  ctx.fillStyle = chCol;
+
+  const base = H*.77;
+  const SC  = H * 0.32;       // scale unit
+  const CX  = W * 0.54;       // chair center x
+  const GY  = base;            // floor level
+
+  const sy = GY - SC*0.40;    // seat top y
+  const sw = SC * 0.54;       // seat width
+  const sh = SC * 0.07;       // seat thickness
+  const sl = CX - sw*0.45;    // seat left edge
+  const sr = CX + sw*0.55;    // seat right edge
+
+  // Rocker
+  ctx.beginPath();
+  ctx.moveTo(sl - SC*0.07, GY - SC*0.005);
+  ctx.quadraticCurveTo(CX + SC*0.02, GY + SC*0.085, sr + SC*0.07, GY - SC*0.005);
+  ctx.lineTo(sr + SC*0.07, GY - SC*0.038);
+  ctx.quadraticCurveTo(CX + SC*0.02, GY + SC*0.048, sl - SC*0.07, GY - SC*0.038);
+  ctx.closePath(); ctx.fill();
+
+  // Front leg
+  ctx.beginPath();
+  ctx.moveTo(sl + SC*0.035, sy+sh); ctx.lineTo(sl + SC*0.072, sy+sh);
+  ctx.lineTo(sl + SC*0.052, GY - SC*0.01); ctx.lineTo(sl + SC*0.015, GY - SC*0.01);
+  ctx.closePath(); ctx.fill();
+
+  // Back leg
+  ctx.beginPath();
+  ctx.moveTo(sr - SC*0.095, sy+sh); ctx.lineTo(sr - SC*0.058, sy+sh);
+  ctx.lineTo(sr - SC*0.035, GY - SC*0.01); ctx.lineTo(sr - SC*0.072, GY - SC*0.01);
+  ctx.closePath(); ctx.fill();
+
+  // Seat
+  ctx.fillRect(sl - SC*0.022, sy, sw + SC*0.044, sh);
+
+  // Back slats (5 vertical)
+  const bkH = SC*0.46, tilt = -SC*0.052;
+  for (let i = 0; i < 5; i++) {
+    const bx = sl + SC*0.04 + (sw - SC*0.08) * i / 4;
+    ctx.beginPath();
+    ctx.moveTo(bx + tilt, sy - bkH); ctx.lineTo(bx + tilt + SC*0.034, sy - bkH);
+    ctx.lineTo(bx + SC*0.034, sy);   ctx.lineTo(bx, sy);
+    ctx.closePath(); ctx.fill();
+  }
+  // Top rail
+  ctx.fillRect(sl + tilt - SC*0.01, sy - bkH - SC*0.048, sw + SC*0.02, SC*0.052);
+  // Mid rail
+  ctx.fillRect(sl + tilt*0.5, sy - bkH*0.5 - SC*0.022, sw, SC*0.042);
+
+  // Armrests
+  const ay = sy - SC*0.165;
+  ctx.fillRect(sl + tilt*0.42 - SC*0.01, ay, sw + SC*0.042, SC*0.042);
+  ctx.fillRect(sl + SC*0.008, ay, SC*0.032, sy - ay); // front support post
+
+  // ── Banjo leaning against the left side of the chair ──
+  const BR = SC*0.135;
+  const BX = sl - SC*0.26;
+  const BY = GY - BR - SC*0.008;
+
+  // Head (outer ring)
+  ctx.fillStyle = chCol;
+  ctx.beginPath(); ctx.arc(BX, BY, BR, 0, Math.PI*2); ctx.fill();
+  // Head inner cutout (shows porch floor)
+  ctx.fillStyle = gc2;
+  ctx.beginPath(); ctx.arc(BX, BY, BR*0.68, 0, Math.PI*2); ctx.fill();
+  // Bridge dot
+  ctx.fillStyle = chCol;
+  ctx.beginPath(); ctx.arc(BX, BY, BR*0.16, 0, Math.PI*2); ctx.fill();
+
+  // Neck (angled slightly right, leaning toward chair)
+  ctx.save();
+  ctx.translate(BX + SC*0.025, BY - BR*0.72);
+  ctx.rotate(-0.17);
+  ctx.fillRect(-SC*0.022, -SC*0.60, SC*0.044, SC*0.60);
+  // Peghead
+  ctx.fillRect(-SC*0.034, -SC*0.60 - SC*0.085, SC*0.068, SC*0.088);
+  ctx.restore();
+
+  // Tailpiece below head
+  ctx.fillRect(BX - SC*0.042, BY + BR - SC*0.038, SC*0.084, SC*0.05);
+
+  // ── Hours / pct text overlay
+  const dispHrs = totalHrs.toFixed(1);
+  const dispPct = (Math.min(100, totalHrs/300*100)).toFixed(1);
+  ctx.font = `bold ${Math.round(W*0.018)}px 'Georgia', serif`;
+  ctx.fillStyle = `rgba(255,215,100,${0.45+p*0.45})`;
+  ctx.textAlign = 'left';
+  ctx.fillText(`${dispHrs} hrs  ·  ${dispPct}% of the trail`, W*0.018, H-H*0.055);
+
+  // ── Milestone tick marks along horizon
+  [10,35,100,300].forEach(h=>{
+    const mx = (h/300)*W;
+    const hit = totalHrs>=h;
+    ctx.strokeStyle = hit ? `rgba(240,176,20,0.8)` : `rgba(180,140,80,0.25)`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mx, base); ctx.lineTo(mx, base+H*.04); ctx.stroke();
+  });
+}
+
+// ── Interactions ──────────────────────────────────
+function logSession() {
+  const mins = parseInt(document.getElementById('f-mins').value);
+  const date = document.getElementById('f-date').value || today();
+  if (!mins || mins<1 || mins>480) { toast('Enter 1–480 minutes'); return; }
+  const d = load();
+  d[date] = (d[date]||0) + mins;
+  save(d);
+  document.getElementById('f-mins').value='';
+  toast(mins>=30 ? 'Session logged — goal met! ✦' : `${mins} min added`);
+  render();
+}
+
+function del(date) {
+  const d = load(); delete d[date]; save(d); render();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'), 2600);
+}
+
+// ── Backup ───────────────────────────────────────
+function exportData() {
+  const payload = { version: '1.0', exportDate: new Date().toISOString(), sessions: load() };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `banjo-backup-${today()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Backup exported!');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!parsed.sessions || typeof parsed.sessions !== 'object') throw new Error('bad format');
+      save(parsed.sessions);
+      render();
+      toast(`Restored from ${new Date(parsed.exportDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`);
+    } catch {
+      toast('Invalid backup file');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ── Init ──────────────────────────────────────────
+document.getElementById('f-date').value = today();
+
+function sizeCanvas() {
+  const cv = document.getElementById('mt-canvas');
+  const ww = cv.parentElement.clientWidth;
+  if (!ww) return;
+  const px = devicePixelRatio||1;
+  const hh = Math.round(ww*.34);
+  cv.width  = ww*px; cv.height = hh*px;
+  cv.style.width=ww+'px'; cv.style.height=hh+'px';
+  const d = load();
+  drawMtn(totalMins(d)/60);
+}
+
+window.addEventListener('resize', sizeCanvas);
+sizeCanvas();
+render();
+</script>
